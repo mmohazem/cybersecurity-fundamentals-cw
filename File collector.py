@@ -15,7 +15,7 @@ def collect_files(source_dir, output_folder):
                 collected_files.append(dest_path)
     
     # Log collected files (Task 2 requirement)
-    with open(os.path.join(output_folder, 'collected_files.log'), 'w') as f:
+    with open(os.path.join(output_folder, 'files.log'), 'w') as f:
         f.write('\n'.join(collected_files))
     
     return output_folder
