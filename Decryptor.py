@@ -9,24 +9,21 @@ def decrypt_file():
     print("\n[2] Decrypt Malware File")
     while True:
         # Get and validate file path
-        file_path = input("[?] Path to encrypted file (or drag file here): ").strip('"\'')
+        file_path = input("[?] Path to encrypted file (or drag file here): ").strip(' "\'')
         file_path = os.path.abspath(os.path.normpath(file_path))
         
         print(f"\n[*] Checking: {file_path}")
         
         if not os.path.isfile(file_path):
-            print(f"[!] ERROR: File not found")
-            print(f"[*] Current directory: {os.getcwd()}")
+            print(f"[!] ERROR: File not found at:")
+            print(f"    Attempted path: {file_path}")
+            print(f"    Current directory: {os.getcwd()}")
             
             # Show files in the target directory
-            dir_path = os.path.dirname(file_path)
-            if os.path.exists(dir_path):
-                print("\nFiles in that folder:")
-                for f in os.listdir(dir_path):
-                    if f.lower().endswith(('.log', '.enc')):
-                        print(f"→ {f} (possible encrypted file)")
-                    else:
-                        print(f"- {f}")
+            dir_path = os.path.dirname(file_path) or os.getcwd()
+            print("\nFiles in that location:")
+            for f in os.listdir(dir_path):
+                print(f"- {f}")
             
             if input("\n[?] Try again? (y/n): ").lower() != 'y':
                 return
@@ -57,7 +54,7 @@ def decrypt_file():
             decrypted = decrypted[:-decrypted[-1]]  # Remove padding
             
             # Save decrypted files
-            output_folder = "decrypted_files"
+            output_folder = os.path.join(os.path.dirname(file_path), "decrypted_files")
             os.makedirs(output_folder, exist_ok=True)
             
             temp_zip = os.path.join(output_folder, "temp_decrypted.zip")
